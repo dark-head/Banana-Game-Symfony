@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello DashboardController!{% endblock %}
+
+{% block body %}
+
+    <h1>Select Your Level</h1>
+
+    <div class="levels">
+        <div>
+            <h2>Easy</h2>
+            <p>Time Limit: 1 minute</p>
+            <p>Highest Score: {{ highestScores.easy }}</p>
+            <a href="{{ path('game_level', { difficulty: 'easy' }) }}" class="btn btn-success">Play Easy</a>
+        </div>
+
+        <div>
+            <h2>Medium</h2>
+            <p>Time Limit: 30 seconds</p>
+            <p>Highest Score: {{ highestScores.medium }}</p>
+            <a href="{{ path('game_level', { difficulty: 'medium' }) }}" class="btn btn-warning">Play Medium</a>
+        </div>
+
+        <div>
+            <h2>Hard</h2>
+            <p>Time Limit: 15 seconds</p>
+            <p>Highest Score: {{ highestScores.hard }}</p>
+            <a href="{{ path('game_level', { difficulty: 'hard' }) }}" class="btn btn-danger">Play Hard</a>
+        </div>
+    </div>
+{% endblock %}

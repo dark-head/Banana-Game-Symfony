@@ -1,0 +1,90 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Banana Game{% endblock %}
+
+{% block body %}
+    <style>
+        .example-wrapper {
+            margin: 1em auto;
+            max-width: 800px;
+            width: 95%;
+            font: 18px/1.5 sans-serif;
+        }
+
+        .example-wrapper code {
+            background: #F5F5F5;
+            padding: 2px 6px;
+        }
+
+        /* public/css/game.css */
+        .levels {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+        }
+
+        .levels div {
+            border: 1px solid #ccc;
+            padding: 20px;
+            width: 200px;
+            text-align: center;
+        }
+
+        .levels h2 {
+            margin-bottom: 10px;
+        }
+
+        .btn {
+            padding: 10px;
+            text-decoration: none;
+            color: white;
+            border-radius: 5px;
+        }
+
+        .btn-success {
+            background-color: #28a745;
+        }
+
+        .btn-warning {
+            background-color: #ffc107;
+        }
+
+        .btn-danger {
+            background-color: #dc3545;
+        }
+
+    </style>
+    <nav style="text-align: end">
+        <a href="{{ path('app_logout') }}">LogOut</a>
+    </nav>
+
+    <div class="example-wrapper">
+        <h1>Hello {{ app.user.firstName }}! ✅</h1>
+
+        <h1>Select Your Level</h1>
+    </div>
+
+
+    <div class="levels">
+        <div>
+            <h2>Easy</h2>
+            <p>Time Limit: 1 minute</p>
+            <p>Highest Score: {{ highestScores.easy }}</p>
+            <a href="{{ path('game_level', { difficulty: 'easy' }) }}" class="btn btn-success">Play Easy</a>
+        </div>
+
+        <div>
+            <h2>Medium</h2>
+            <p>Time Limit: 30 seconds</p>
+            <p>Highest Score: {{ highestScores.medium }}</p>
+            <a href="{{ path('game_level', { difficulty: 'medium' }) }}" class="btn btn-warning">Play Medium</a>
+        </div>
+
+        <div>
+            <h2>Hard</h2>
+            <p>Time Limit: 15 seconds</p>
+            <p>Highest Score: {{ highestScores.hard }}</p>
+            <a href="{{ path('game_level', { difficulty: 'hard' }) }}" class="btn btn-danger">Play Hard</a>
+        </div>
+    </div>
+{% endblock %}

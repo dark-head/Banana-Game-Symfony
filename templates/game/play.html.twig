@@ -1,0 +1,103 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Game{% endblock %}
+
+{% block body %}
+    <h1>Level: {{ difficulty }}</h1>
+    <p>Time Remaining: <span id="timer">{{ timeLimit }}</span> seconds</p>
+    <img src="{{ question }}" alt="Question Image">
+    <form id="answerForm">
+        <input type="number" name="answer" placeholder="Your answer" required>
+        <button type="submit">Submit</button>
+    </form>
+    <p>Score: {{ gameState.score }}</p>
+    <p>Lives: {{ gameState.lives }}</p>
+{#    <script>#}
+{#        document.getElementById('answerForm').onsubmit = async function (e) {#}
+{#            e.preventDefault();#}
+{#            const response = await fetch("{{ path('game_submit_answer') }}", {#}
+{#                method: 'POST',#}
+{#                body: new FormData(this)#}
+{#            });#}
+{#            const result = await response.json();#}
+{#            console.log(result);#}
+{#            if (result.gameOver) {#}
+{#                alert("Game Over! Highest Score: " + result.highestScore);#}
+{#                window.location.href = "{{ path('game_home') }}";#}
+{#            } else {#}
+{#                // Update score and lives without reloading#}
+{#                document.querySelector('p[Score]').textContent = "Score: " + result.score;#}
+{#                document.querySelector('p[Lives]').textContent = "Lives: " + result.lives;#}
+{#            }#}
+{#        };#}
+{#    </script>#}
+
+
+
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        let timeRemaining = {{ timeLimit }};
+        let countdownInterval;
+
+        function startTimer() {
+            countdownInterval = setInterval(() => {
+                if (timeRemaining <= 0) {
+                    clearInterval(countdownInterval);
+                    handleTimeout();
+                } else {
+                    document.getElementById('timer').textContent = timeRemaining;
+                    timeRemaining--;
+                }
+            }, 1000);
+        }
+
+        function handleTimeout() {
+            console.log({{ solution }})
+            // Call backend to handle timeout (loss of life)
+            fetch('{{ path('game_submit_answer') }}', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ answer: null, solution: {{ solution }} }) // Indicate no answer was provided
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.gameOver) {
+                        alert("Game Over! Your score: " + data.score);
+                        location.reload();
+                    } else {
+                        timeRemaining = {{ timeLimit }};
+                        document.getElementById('lives').textContent = data.lives;
+                        document.getElementById('score').textContent = data.score;
+                        startTimer(); // Restart timer for next question
+                    }
+                });
+        }
+
+        // Start the game timer
+        startTimer();
+
+        // Submit answer manually
+        function submitAnswer(answer) {
+            clearInterval(countdownInterval);
+            fetch('{{ path('game_submit_answer') }}', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ answer: answer, solution: {{ solution }} })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.gameOver) {
+                        alert("Game Over! Your score: " + data.score);
+                        location.reload();
+                    } else {
+                        timeRemaining = {{ timeLimit }};
+                        document.getElementById('lives').textContent = data.lives;
+                        document.getElementById('score').textContent = data.score;
+                        startTimer();
+                    }
+                });
+        }
+    </script>
+{% endblock %}
