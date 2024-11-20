@@ -21,11 +21,11 @@ class GameController extends AbstractController
         $this->entityManager = $entityManager;
     }
 
-    #[Route('/game', name: 'game_home')]
-    public function index(): Response
-    {
-        return $this->render('game/index.html.twig');
-    }
+//    #[Route('/game', name: 'game_home')]
+//    public function index(): Response
+//    {
+//        return $this->render('game/index.html.twig');
+//    }
 
     #[Route('/game/level/{difficulty}', name: 'game_level')]
     public function playLevel(Request $request, string $difficulty): Response
@@ -49,10 +49,9 @@ class GameController extends AbstractController
             $session->set('game_state', [
                 'score' => 0,
                 'lives' => 3,
-                'highestScore' => 0,
             ]);
         }
-
+        $session->set('difficulty', $difficulty);
         return $this->render('game/play.html.twig', [
             'difficulty' => $difficulty,
             'question' => $questionData['question'],
@@ -65,10 +64,13 @@ class GameController extends AbstractController
     #[Route('/game/submit-answer', name: 'game_submit_answer', methods: ['POST'])]
     public function submitAnswer(Request $request): JsonResponse
     {
-        $answer = $_POST['answer'];
-        $solution = $_POST['solution'];
+        $data = json_decode($request->getContent(), true);
+
+        $answer = $data['answer'] ?? null;
+        $solution = $data['solution'] ?? null;
         $session = $request->getSession();
         $gameState = $session->get('game_state');
+        $difficulty = $session->get('difficulty');
 
         // Check answer and update score or lives
         if ($answer == $solution) {
@@ -76,25 +78,25 @@ class GameController extends AbstractController
         } else {
             $gameState['lives']--;
         }
-//        dd($gameState, $answer, $solution);
         // End game if no lives left
         if ($gameState['lives'] <= 0) {
-            $gameState['highestScore'] = max($gameState['highestScore'], $gameState['score']);
             // Save game data to database
-            $this->saveGameData($gameState);
+            $this->saveGameData($gameState, $difficulty);
             $session->remove('game_state'); // Reset for new game
-            return new JsonResponse(['gameOver' => true, 'highestScore' => $gameState['highestScore']]);
+            return new JsonResponse(['gameOver' => true, 'score' => $gameState['score']]);
         }
 
         $session->set('game_state', $gameState);
         return new JsonResponse(['score' => $gameState['score'], 'lives' => $gameState['lives']]);
     }
 
-    private function saveGameData(array $gameState): void
+    private function saveGameData(array $gameState, $difficulty): void
     {
         $gameSession = new GameSession();
         $gameSession->setScore($gameState['highestScore']);
         $gameSession->setDate(new \DateTime());
+        $gameSession->setDifficulty($difficulty);
+        $gameSession->setUser($this->getUser());
         $this->entityManager->persist($gameSession);
         $this->entityManager->flush();
     }

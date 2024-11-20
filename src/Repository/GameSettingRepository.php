@@ -4,7 +4,7 @@ namespace App\Repository;
 
 use Doctrine\ORM\EntityRepository;
 
-class GameSessionRepository extends EntityRepository
+class GameSettingRepository extends EntityRepository
 {
 
     //    /**

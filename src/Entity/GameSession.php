@@ -6,6 +6,7 @@ use App\Repository\GameSessionRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
+#[ORM\Table(name: 'game_session')]
 #[ORM\Entity(repositoryClass: GameSessionRepository::class)]
 class GameSession
 {

@@ -7,33 +7,11 @@
     <p>Time Remaining: <span id="timer">{{ timeLimit }}</span> seconds</p>
     <img src="{{ question }}" alt="Question Image">
     <form id="answerForm">
-        <input type="number" name="answer" placeholder="Your answer" required>
+        <input type="number" id="answerInput" name="answer" placeholder="Your answer" required>
         <button type="submit">Submit</button>
     </form>
-    <p>Score: {{ gameState.score }}</p>
-    <p>Lives: {{ gameState.lives }}</p>
-{#    <script>#}
-{#        document.getElementById('answerForm').onsubmit = async function (e) {#}
-{#            e.preventDefault();#}
-{#            const response = await fetch("{{ path('game_submit_answer') }}", {#}
-{#                method: 'POST',#}
-{#                body: new FormData(this)#}
-{#            });#}
-{#            const result = await response.json();#}
-{#            console.log(result);#}
-{#            if (result.gameOver) {#}
-{#                alert("Game Over! Highest Score: " + result.highestScore);#}
-{#                window.location.href = "{{ path('game_home') }}";#}
-{#            } else {#}
-{#                // Update score and lives without reloading#}
-{#                document.querySelector('p[Score]').textContent = "Score: " + result.score;#}
-{#                document.querySelector('p[Lives]').textContent = "Lives: " + result.lives;#}
-{#            }#}
-{#        };#}
-{#    </script>#}
-
-
-
+    <p>Score: <span id="score">{{ gameState.score }}</span></p>
+    <p>Lives: <span id="lives">{{ gameState.lives }}</span></p>
 {% endblock %}
 
 {% block javascripts %}
@@ -41,63 +19,96 @@
         let timeRemaining = {{ timeLimit }};
         let countdownInterval;
 
+        // Start the timer
         function startTimer() {
             countdownInterval = setInterval(() => {
                 if (timeRemaining <= 0) {
                     clearInterval(countdownInterval);
-                    handleTimeout();
+                    handleTimeout(); // Handle timeout when time runs out
                 } else {
-                    document.getElementById('timer').textContent = timeRemaining;
+                    const timerElement = document.getElementById('timer');
+                    if (timerElement) timerElement.textContent = timeRemaining;
                     timeRemaining--;
                 }
             }, 1000);
         }
 
+        // Handle timeout (when the timer reaches 0)
         function handleTimeout() {
-            console.log({{ solution }})
-            // Call backend to handle timeout (loss of life)
             fetch('{{ path('game_submit_answer') }}', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ answer: null, solution: {{ solution }} }) // Indicate no answer was provided
+                body: JSON.stringify({
+                    answer: null, // No answer provided on timeout
+                    solution: {{ solution|json_encode|raw }} // Ensure solution is properly escaped
+                })
             })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.gameOver) {
-                        alert("Game Over! Your score: " + data.score);
-                        location.reload();
-                    } else {
-                        timeRemaining = {{ timeLimit }};
-                        document.getElementById('lives').textContent = data.lives;
-                        document.getElementById('score').textContent = data.score;
-                        startTimer(); // Restart timer for next question
-                    }
+                .then(response => {
+                    if (!response.ok) throw new Error('Network error');
+                    return response.json();
+                })
+                .then(updateGameState)
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred. Please try again.');
                 });
         }
 
-        // Start the game timer
-        startTimer();
+        // Handle form submission
+        document.addEventListener("DOMContentLoaded", () => {
+            const answerForm = document.getElementById('answerForm');
+            if (answerForm) {
+                answerForm.onsubmit = function (e) {
+                    e.preventDefault();
+                    clearInterval(countdownInterval);
 
-        // Submit answer manually
-        function submitAnswer(answer) {
-            clearInterval(countdownInterval);
-            fetch('{{ path('game_submit_answer') }}', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ answer: answer, solution: {{ solution }} })
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.gameOver) {
-                        alert("Game Over! Your score: " + data.score);
-                        location.reload();
-                    } else {
-                        timeRemaining = {{ timeLimit }};
-                        document.getElementById('lives').textContent = data.lives;
-                        document.getElementById('score').textContent = data.score;
-                        startTimer();
-                    }
-                });
+                    const answerInput = document.getElementById('answerInput');
+                    const answer = answerInput ? answerInput.value : null;
+
+                    fetch('{{ path('game_submit_answer') }}', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            answer: answer,
+                            solution: {{ solution|json_encode|raw }}
+                        })
+                    })
+                        .then(response => {
+                            if (!response.ok) throw new Error('Network error');
+                            return response.json();
+                        })
+                        .then(updateGameState)
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert('An error occurred. Please try again.');
+                        });
+                };
+            } else {
+                console.error('Form with ID "answerForm" not found in DOM.');
+            }
+
+            // Start the game timer
+            console.log("DOM fully loaded. Starting the timer...");
+            startTimer();
+        });
+
+        // Update the game state dynamically
+        function updateGameState(data) {
+            if (data.gameOver) {
+                alert("Game Over! Your Score is: " + (data.score));
+                window.location.href = "{{ path('app_dashboard') }}"; // Redirect to game home
+            } else {
+                location.reload();
+                // Update lives, score, and reset the timer
+                const livesElement = document.getElementById('lives');
+                const scoreElement = document.getElementById('score');
+
+                if (livesElement) livesElement.textContent = data.lives;
+                if (scoreElement) scoreElement.textContent = data.score;
+
+                timeRemaining = {{ timeLimit }};
+                startTimer(); // Restart timer for next question
+            }
         }
     </script>
 {% endblock %}
