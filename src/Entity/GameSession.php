@@ -25,8 +25,9 @@ class GameSession
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
-    #[ORM\Column(type: 'string', length: 10)]
-    private ?string $difficulty;
+    #[ORM\ManyToOne(inversedBy: 'gameSessions')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?GameSetting $gameSetting;
 
     public function getId(): ?int
     {
@@ -69,15 +70,14 @@ class GameSession
         return $this;
     }
 
-    // Getter and Setter for difficulty
-    public function getDifficulty(): ?string
+    public function getGameSetting(): ?GameSetting
     {
-        return $this->difficulty;
+        return $this->gameSetting;
     }
 
-    public function setDifficulty(string $difficulty): self
+    public function setGameSetting(?GameSetting $gameSetting): self
     {
-        $this->difficulty = $difficulty;
+        $this->gameSetting = $gameSetting;
         return $this;
     }
 }

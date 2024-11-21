@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Constant\Constant;
 use App\Entity\User;
 use App\Form\RegistrationFormType;
 use Doctrine\ORM\EntityManagerInterface;
@@ -25,12 +26,13 @@ class RegistrationController extends AbstractController
             $plainPassword = $form->get('plainPassword')->getData();
 
             // encode the plain password
-            $user->setPassword($userPasswordHasher->hashPassword($user, $plainPassword));
+            $user->setPassword($userPasswordHasher->hashPassword($user, $plainPassword))
+                //set user role
+                ->setRoles([Constant::ROLE_PLAYER])
+                ->setIsActive(true);
 
             $entityManager->persist($user);
             $entityManager->flush();
-
-            // do anything else you need here, like send an email
 
             return $this->redirectToRoute('app_login');
         }

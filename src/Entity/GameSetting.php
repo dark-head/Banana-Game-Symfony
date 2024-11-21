@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\GameSettingRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Table(name: 'game_setting')]
@@ -17,10 +19,21 @@ class GameSetting
     #[ORM\Column]
     private ?int $totalSecond = 30;
 
-    #[ORM\Column(type: 'string', length: 10)]
-    private ?string $difficulty;
+    #[ORM\Column(unique: true)]
+    private ?int $level;
+
+    #[ORM\Column]
+    private ?bool $isActive = false;
+
+    #[ORM\OneToMany(targetEntity: GameSession::class, mappedBy: 'gameSetting')]
+    private Collection $gameSessions;
 
     use EntityCommonTrait;
+
+    public function __construct()
+    {
+        $this->gameSessions = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -39,15 +52,56 @@ class GameSetting
         return $this;
     }
 
-    // Getter and Setter for difficulty
-    public function getDifficulty(): ?string
+    /**
+     * @return Collection<int, GameSession>
+     */
+    public function getGameSessions(): Collection
     {
-        return $this->difficulty;
+        return $this->gameSessions;
     }
 
-    public function setDifficulty(string $difficulty): self
+    public function addGameSession(GameSession $gameSession): static
     {
-        $this->difficulty = $difficulty;
+        if (!$this->gameSessions->contains($gameSession)) {
+            $this->gameSessions->add($gameSession);
+            $gameSession->setGameSetting($this);
+        }
+
         return $this;
     }
+
+    public function removeGameSession(GameSession $gameSession): static
+    {
+        if ($this->gameSessions->removeElement($gameSession)) {
+            // set the owning side to null (unless already changed)
+            if ($gameSession->getGameSetting() === $this) {
+                $gameSession->setGameSetting(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getLevel(): ?int
+    {
+        return $this->level;
+    }
+
+    public function setLevel(?int $level): self
+    {
+        $this->level = $level;
+        return $this;
+    }
+
+    public function getIsActive(): ?bool
+    {
+        return $this->isActive;
+    }
+
+    public function setIsActive(?bool $isActive): self
+    {
+        $this->isActive = $isActive;
+        return $this;
+    }
+
 }

@@ -1,3 +1,32 @@
 body {
-    background-color: skyblue;
+    background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    font-family: Arial, sans-serif;
+}
+
+.container {
+    background: rgba(0, 0, 0, 0.9); /* Light card background */
+    color: #333; /* Text color for contrast */
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+h1, p {
+    text-align: center;
+}
+
+a {
+    color: #2575fc;
+}
+label, h1, p {
+    color: #FFF;
+}
+
+a:hover {
+    text-decoration: underline;
 }
