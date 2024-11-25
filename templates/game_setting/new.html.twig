@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Game Setting List{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div>
+            <h1>
+                Game Setting
+            </h1>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                {{ form_start(form) }}
+                <div class="form-group mb-3">
+                    {{ form_label(form.level, null, {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.level, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_errors(form.level) }}
+                </div>
+                <div class="form-group mb-3">
+                    {{ form_label(form.totalSecond, null, {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.totalSecond, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_errors(form.totalSecond) }}
+                </div>
+                <div class="form-group mb-3">
+                    {{ form_label(form.isActive, null, {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.isActive) }}
+                    {{ form_errors(form.isActive) }}
+                </div>
+
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}

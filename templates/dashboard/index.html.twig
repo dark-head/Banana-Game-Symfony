@@ -32,6 +32,7 @@
 
         .levels h2 {
             margin-bottom: 10px;
+            color: #cccccc;
         }
 
         .btn {
@@ -54,37 +55,59 @@
         }
 
     </style>
-    <nav style="text-align: end">
-        <a href="{{ path('app_logout') }}">LogOut</a>
-    </nav>
 
-    <div class="example-wrapper">
-        <h1>Hello {{ app.user.firstName }}! ✅</h1>
+    <div class="container">
+        <div class="example-wrapper">
+            <h1>Hello {{ app.user.firstName }}! ✅</h1>
 
-        <h1>Select Your Level</h1>
-    </div>
-
-
-    <div class="levels">
-        <div>
-            <h2>Easy</h2>
-            <p>Time Limit: 1 minute</p>
-            <p>Highest Score: {{ highestScores.easy }}</p>
-            <a href="{{ path('game_level', { difficulty: 'easy' }) }}" class="btn btn-success">Play Easy</a>
+            <h1>Select Your Level</h1>
         </div>
 
-        <div>
-            <h2>Medium</h2>
-            <p>Time Limit: 30 seconds</p>
-            <p>Highest Score: {{ highestScores.medium }}</p>
-            <a href="{{ path('game_level', { difficulty: 'medium' }) }}" class="btn btn-warning">Play Medium</a>
+
+        <div class="levels">
+            <div>
+                <h2>Easy</h2>
+                <p>Time Limit: 1 minute</p>
+                <p>Highest Score: {{ highestScores.easy }}</p>
+                <a href="{{ path('game_level', { gameSetting: easy }) }}" class="btn btn-success">Play Easy</a>
+            </div>
+
+            <div>
+                <h2>Medium</h2>
+                <p>Time Limit: 30 seconds</p>
+                <p>Highest Score: {{ highestScores.medium }}</p>
+                <a href="{{ path('game_level', { gameSetting: medium }) }}" class="btn btn-warning">Play Medium</a>
+            </div>
+
+            <div>
+                <h2>Hard</h2>
+                <p>Time Limit: 15 seconds</p>
+                <p>Highest Score: {{ highestScores.hard }}</p>
+                <a href="{{ path('game_level', { gameSetting: hard }) }}" class="btn btn-danger">Play Hard</a>
+            </div>
         </div>
 
-        <div>
-            <h2>Hard</h2>
-            <p>Time Limit: 15 seconds</p>
-            <p>Highest Score: {{ highestScores.hard }}</p>
-            <a href="{{ path('game_level', { difficulty: 'hard' }) }}" class="btn btn-danger">Play Hard</a>
+        <div class="mt-5">
+            <div class="d-flex justify-content-center mt-3">
+                <div class="col-md-6 row ">
+                    <a href="{{ path('app_game_setting') }}" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">Game Setting</a>
+                </div>
+            </div>
+            <div class="d-flex justify-content-center mt-3">
+                <div class="col-md-6 row ">
+                    <a href="#" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">Lead Board</a>
+                </div>
+            </div>
+            <div class="d-flex justify-content-center mt-3">
+                <div class="col-md-6 row ">
+                    <a href="#" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">History</a>
+                </div>
+            </div>
+            <div class="d-flex justify-content-center mt-3">
+                <div class="col-md-6 row ">
+                    <a href="{{ path('app_logout') }}" class="btn btn-danger btn-lg active" role="button" aria-pressed="true">LogOut</a>
+                </div>
+            </div>
         </div>
     </div>
 {% endblock %}

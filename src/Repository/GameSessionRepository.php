@@ -2,33 +2,33 @@
 
 namespace App\Repository;
 
+use App\Entity\GameSession;
+use App\Helper\QueryHelper;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\QueryBuilder;
 
 class GameSessionRepository extends EntityRepository
 {
+    public function getAllQuery(array $params = []): QueryBuilder
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->select('gs')
+            ->from(GameSession::class, 'gs')
+            ->leftJoin('gs.gameSetting', 'game_setting');
 
-    //    /**
-    //     * @return GameSession[] Returns an array of GameSession objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('g')
-    //            ->andWhere('g.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('g.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+        if (QueryHelper::FilterCheck($params, 'level'))
+            $qb->andWhere('game_setting.level = :level')->setParameter('level', $params['level']);
 
-    //    public function findOneBySomeField($value): ?GameSession
-    //    {
-    //        return $this->createQueryBuilder('g')
-    //            ->andWhere('g.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+        if (QueryHelper::FilterCheck($params, 'user'))
+            $qb->andWhere('gs.user = :user')->setParameter('user', $params['user']);
+
+
+//        if (QueryHelper::FilterCheck($params, 'highestScore', true))
+//            $qb->andWhere('gs.score = MAX(gs.score)');
+//        dd($params);
+
+        $qb->orderBy('gs.id', 'DESC');
+
+        return $qb;
+    }
 }

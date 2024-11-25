@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Constant\Constant;
+use App\Entity\GameSetting;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -27,15 +29,13 @@ class GameController extends AbstractController
 //        return $this->render('game/index.html.twig');
 //    }
 
-    #[Route('/game/level/{difficulty}', name: 'game_level')]
-    public function playLevel(Request $request, string $difficulty): Response
+    #[Route('/game/level/{gameSetting}', name: 'game_level')]
+    public function playLevel(Request $request, GameSetting $gameSetting): Response
     {
         // Define time limits per level
-        $timeLimits = [
-            'easy' => 60,
-            'medium' => 30,
-            'hard' => 15,
-        ];
+        $timeLimits = $gameSetting->getTotalSecond();
+
+        $level = $gameSetting->getLevel();
 
         // Fetch question from the API
         $apiUrl = $this->API_URL;
@@ -51,12 +51,14 @@ class GameController extends AbstractController
                 'lives' => 3,
             ]);
         }
-        $session->set('difficulty', $difficulty);
+        $session->set('level', $level);
+        $session->set('gameSetting', $gameSetting);
         return $this->render('game/play.html.twig', [
-            'difficulty' => $difficulty,
+            'level' => $level,
+            'difficulty' => Constant::$gameLevels[$level],
             'question' => $questionData['question'],
             'solution' => $questionData['solution'],
-            'timeLimit' => $timeLimits[$difficulty],
+            'timeLimit' => $timeLimits,
             'gameState' => $session->get('game_state'),
         ]);
     }
@@ -70,7 +72,7 @@ class GameController extends AbstractController
         $solution = $data['solution'] ?? null;
         $session = $request->getSession();
         $gameState = $session->get('game_state');
-        $difficulty = $session->get('difficulty');
+        $gameSetting = $session->get('gameSetting');
 
         // Check answer and update score or lives
         if ($answer == $solution) {
@@ -81,21 +83,22 @@ class GameController extends AbstractController
         // End game if no lives left
         if ($gameState['lives'] <= 0) {
             // Save game data to database
-            $this->saveGameData($gameState, $difficulty);
+            $this->saveGameData($gameState, $gameSetting);
+            $score = $gameState['score'];
             $session->remove('game_state'); // Reset for new game
-            return new JsonResponse(['gameOver' => true, 'score' => $gameState['score']]);
+            return new JsonResponse(['gameOver' => true, 'score' => $score]);
         }
 
         $session->set('game_state', $gameState);
         return new JsonResponse(['score' => $gameState['score'], 'lives' => $gameState['lives']]);
     }
 
-    private function saveGameData(array $gameState, $difficulty): void
+    private function saveGameData(array $gameState, GameSetting $gameSetting): void
     {
         $gameSession = new GameSession();
-        $gameSession->setScore($gameState['highestScore']);
+        $gameSession->setScore($gameState['score']);
         $gameSession->setDate(new \DateTime());
-        $gameSession->setDifficulty($difficulty);
+        $gameSession->setGameSetting($gameSetting);
         $gameSession->setUser($this->getUser());
         $this->entityManager->persist($gameSession);
         $this->entityManager->flush();

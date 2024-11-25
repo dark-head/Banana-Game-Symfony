@@ -54,8 +54,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?bool $isActive = false;
 
-    use EntityCommonTrait;
-
     public function __construct()
     {
         $this->gameSessions = new ArrayCollection();

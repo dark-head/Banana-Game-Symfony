@@ -25,8 +25,8 @@ class GameSetting
     #[ORM\Column]
     private ?bool $isActive = false;
 
-    #[ORM\OneToMany(targetEntity: GameSession::class, mappedBy: 'gameSetting')]
-    private Collection $gameSessions;
+    #[ORM\OneToMany(targetEntity: GameSession::class, mappedBy: 'gameSetting', cascade: ['persist', 'remove'], orphanRemoval: true)]
+    private iterable  $gameSessions;
 
     use EntityCommonTrait;
 
@@ -34,6 +34,12 @@ class GameSetting
     {
         $this->gameSessions = new ArrayCollection();
     }
+
+    public function __toString(): string
+    {
+        return "$this->id, $this->totalSecond, $this->level";
+    }
+
 
     public function getId(): ?int
     {

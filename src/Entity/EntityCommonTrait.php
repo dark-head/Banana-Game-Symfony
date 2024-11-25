@@ -9,7 +9,6 @@ use Gedmo\Mapping\Annotation as Gedmo;
 trait EntityCommonTrait
 {
 
-    #[ORM\Column(name: 'created_by')]
     #[ORM\ManyToOne(targetEntity: User::class)]
     private ?User $createdBy = null;
 

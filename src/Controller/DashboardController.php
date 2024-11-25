@@ -2,7 +2,9 @@
 
 namespace App\Controller;
 
+use App\Constant\Constant;
 use App\Entity\GameSession;
+use App\Entity\GameSetting;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -30,32 +32,41 @@ class DashboardController extends AbstractController
         $session->set('difficulty', '');
 
 
+        $easy = $this->entityManager->getRepository(GameSetting::class)->findOneBy(['level' => Constant::EASY_LEVEL]);
+        $medium = $this->entityManager->getRepository(GameSetting::class)->findOneBy(['level' => Constant::MEDIUM_LEVEL]);
+        $hard = $this->entityManager->getRepository(GameSetting::class)->findOneBy(['level' => Constant::HARD_LEVEL]);
         $highestScores = [
-            'easy' => $this->getHighestScore('easy'),
-            'medium' => $this->getHighestScore('medium'),
-            'hard' => $this->getHighestScore('hard'),
+            'easy' => $this->getHighestScore(Constant::EASY_LEVEL),
+            'medium' => $this->getHighestScore(Constant::MEDIUM_LEVEL),
+            'hard' => $this->getHighestScore(Constant::HARD_LEVEL),
         ];
         return $this->render('dashboard/index.html.twig', [
             'controller_name' => 'DashboardController',
             'highestScores' => $highestScores,
+            'easy' => $easy->getId(),
+            'medium' => $medium->getId(),
+            'hard' => $hard->getId(),
         ]);
     }
 
-    private function getHighestScore(string $difficulty): int
+    private function getHighestScore(int $difficulty): int
     {
-        // Get user highest score per difficulty
+        $params['user'] = $this->getUser()->getId();
+        $params['level'] = $difficulty;
+        $params['highestScore'] = true;
+        // Get user the highest score per difficulty
         $highestScore = $this->entityManager->getRepository(GameSession::class)
-            ->findOneBy(['difficulty' => $difficulty, 'user' => $this->getUser()], ['score' => 'DESC']);
-
+            ->getAllQuery($params)->getQuery()->getResult();
         return $highestScore ? $highestScore->getScore() : 0;
     }
 
-    private function getUserHistory(string $difficulty): int
+    private function getUserHistory(): GameSession
     {
         // Get user history
+        /** @var GameSession $userHistory */
         $userHistory = $this->entityManager->getRepository(GameSession::class)
             ->findBy(['user' => $this->getUser()], ['score' => 'DESC']);
 
-        return $userHistory ? $userHistory->getScore() : 0;
+        return $userHistory;
     }
 }

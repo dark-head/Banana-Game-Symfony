@@ -21,12 +21,11 @@ class GameSession
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $date = null;
 
-    #[ORM\ManyToOne(inversedBy: 'gameSessions')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\ManyToOne(targetEntity: User::class)]
     private ?User $user = null;
 
-    #[ORM\ManyToOne(inversedBy: 'gameSessions')]
     #[ORM\JoinColumn(nullable: false)]
+    #[ORM\ManyToOne(targetEntity: GameSetting::class, inversedBy: 'gameSessions')]
     private ?GameSetting $gameSetting;
 
     public function getId(): ?int
