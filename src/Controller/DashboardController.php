@@ -56,7 +56,7 @@ class DashboardController extends AbstractController
         $params['highestScore'] = true;
         // Get user the highest score per difficulty
         $highestScore = $this->entityManager->getRepository(GameSession::class)
-            ->getAllQuery($params)->getQuery()->getResult();
+            ->getAllQuery($params)->getQuery()->getOneOrNullResult();
         return $highestScore ? $highestScore->getScore() : 0;
     }
 

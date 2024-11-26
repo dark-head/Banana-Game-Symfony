@@ -17,6 +17,8 @@
         }, 1000);
     }
 
+    startTimer()
+
     // Handle timeout (when the timer reaches 0)
     function handleTimeout() {
         fetch('{{ path('game_submit_answer') }}', {
@@ -39,7 +41,7 @@
     }
 
     // Handle form submission
-    document.addEventListener("DOMContentLoaded", () => {
+    document.addEventListener("load", () => {
         const answerForm = document.getElementById('answerForm');
         if (answerForm) {
             answerForm.onsubmit = function (e) {
@@ -78,6 +80,7 @@
 
     // Update the game state dynamically
     function updateGameState(data) {
+        console.log('asdfasdfasdf')
         if (data.gameOver) {
             alert("Game Over! Your Score is: " + (data.score));
             window.location.href = "{{ path('app_dashboard') }}"; // Redirect to game home

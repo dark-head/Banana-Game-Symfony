@@ -24,7 +24,7 @@ class GameSession
     #[ORM\ManyToOne(targetEntity: User::class)]
     private ?User $user = null;
 
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: true)]
     #[ORM\ManyToOne(targetEntity: GameSetting::class, inversedBy: 'gameSessions')]
     private ?GameSetting $gameSetting;
 

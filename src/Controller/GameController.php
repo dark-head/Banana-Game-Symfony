@@ -52,7 +52,7 @@ class GameController extends AbstractController
             ]);
         }
         $session->set('level', $level);
-        $session->set('gameSetting', $gameSetting);
+        $session->set('gameSetting', $gameSetting->getId());
         return $this->render('game/play.html.twig', [
             'level' => $level,
             'difficulty' => Constant::$gameLevels[$level],
@@ -93,8 +93,9 @@ class GameController extends AbstractController
         return new JsonResponse(['score' => $gameState['score'], 'lives' => $gameState['lives']]);
     }
 
-    private function saveGameData(array $gameState, GameSetting $gameSetting): void
+    private function saveGameData(array $gameState, int $gameSetting): void
     {
+        $gameSetting = $this->entityManager->find(GameSetting::class, $gameSetting);
         $gameSession = new GameSession();
         $gameSession->setScore($gameState['score']);
         $gameSession->setDate(new \DateTime());

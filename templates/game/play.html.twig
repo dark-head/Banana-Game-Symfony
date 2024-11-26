@@ -20,5 +20,12 @@
 
     </div>
 
-    {{ include('game/gameScript.html.twig') }}
+
 {% endblock %}
+
+
+
+        {% block javascripts %}
+            {{ parent() }}
+            {{ include('game/gameScript.html.twig') }}
+        {% endblock %}
