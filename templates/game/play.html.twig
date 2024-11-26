@@ -3,29 +3,66 @@
 {% block title %}Game{% endblock %}
 
 {% block body %}
-    <div class="container">
-        <h1>Level: {{ difficulty }}</h1>
-        <p>Time Remaining: <span id="timer">{{ timeLimit }}</span> seconds</p>
-        <div class="d-flex justify-content-center">
-            <p>Lives: <span id="lives">{{ gameState.lives }}</span></p>
-            <div>
-                <img src="{{ question }}" alt="Question Image">
-                <form id="answerForm">
-                    <input type="number" id="answerInput" name="answer" placeholder="Your answer" required>
-                    <button type="submit">Submit</button>
-                </form>
+    <style>
+        /* Hearts and score styling */
+        .hearts {
+            display: flex;
+            margin-top: 10px;
+        }
+
+        .heart {
+            font-size: 2em;
+            color: red;
+            margin-right: 5px;
+        }
+
+        .heart.disabled {
+            color: #ddd; /* Light gray for used hearts */
+        }
+
+        .score {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+    </style>
+    <div
+            data-controller="game"
+            data-game-submit-url="{{ path('game_submit_answer') }}"
+            data-game-dashboard-url="{{ path('app_dashboard') }}"
+            data-game-solution="{{ solution|json_encode|e }}"
+    >
+        <div class="container">
+            <h1>Level: {{ difficulty }}</h1>
+            <p>Time Remaining: <span data-game-target="timer" data-time-limit="{{ timeLimit }}">{{ timeLimit }}</span> seconds</p>
+
+            <div class="d-flex justify-content-center">
+                <div>
+                    <p>Lives:</p>
+                    <div data-game-target="lives" class="hearts"> <!-- Corrected target -->
+                        {% for i in 1..gameState.lives %}
+                            <span class="heart">&#10084;</span> <!-- Red heart for remaining lives -->
+                        {% endfor %}
+                    </div>
+                </div>
+                <div>
+                    <img src="{{ question }}" alt="Question Image" data-game-target="questionImage">
+
+                    <!-- Hidden input to store the solution -->
+                    <input type="hidden" data-game-target="solutionInput" value="{{ solution }}">
+
+                    <form data-game-target="answerForm" data-action="submit->game#submitForm">
+                        <input type="number" data-game-target="answerInput" name="answer" placeholder="Your answer" required>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
+                </div>
+
+                <div>
+                    <p>Score:</p>
+                    <span data-game-target="score" class="score" style="color: #cccccc">{{ gameState.score }}</span>
+                </div>
             </div>
-            <p>Score: <span id="score">{{ gameState.score }}</span></p>
         </div>
-
     </div>
-
-
 {% endblock %}
-
-
-
-        {% block javascripts %}
-            {{ parent() }}
-            {{ include('game/gameScript.html.twig') }}
-        {% endblock %}

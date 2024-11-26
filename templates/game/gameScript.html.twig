@@ -1,100 +1,100 @@
-<script>
-    console.log('asdf');
-    let timeRemaining = {{ timeLimit }};
-    let countdownInterval;
+{#<script>#}
+{#    console.log('asdf');#}
+{#    let timeRemaining = {{ timeLimit }};#}
+{#    let countdownInterval;#}
 
-    // Start the timer
-    function startTimer() {
-        countdownInterval = setInterval(() => {
-            if (timeRemaining <= 0) {
-                clearInterval(countdownInterval);
-                handleTimeout(); // Handle timeout when time runs out
-            } else {
-                const timerElement = document.getElementById('timer');
-                if (timerElement) timerElement.textContent = timeRemaining;
-                timeRemaining--;
-            }
-        }, 1000);
-    }
+{#    // Start the timer#}
+{#    function startTimer() {#}
+{#        countdownInterval = setInterval(() => {#}
+{#            if (timeRemaining <= 0) {#}
+{#                clearInterval(countdownInterval);#}
+{#                handleTimeout(); // Handle timeout when time runs out#}
+{#            } else {#}
+{#                const timerElement = document.getElementById('timer');#}
+{#                if (timerElement) timerElement.textContent = timeRemaining;#}
+{#                timeRemaining--;#}
+{#            }#}
+{#        }, 1000);#}
+{#    }#}
 
-    startTimer()
+{#    startTimer()#}
 
-    // Handle timeout (when the timer reaches 0)
-    function handleTimeout() {
-        fetch('{{ path('game_submit_answer') }}', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                answer: null, // No answer provided on timeout
-                solution: {{ solution|json_encode|raw }} // Ensure solution is properly escaped
-            })
-        })
-            .then(response => {
-                if (!response.ok) throw new Error('Network error');
-                return response.json();
-            })
-            .then(updateGameState)
-            .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred. Please try again.');
-            });
-    }
+{#    // Handle timeout (when the timer reaches 0)#}
+{#    function handleTimeout() {#}
+{#        fetch('{{ path('game_submit_answer') }}', {#}
+{#            method: 'POST',#}
+{#            headers: { 'Content-Type': 'application/json' },#}
+{#            body: JSON.stringify({#}
+{#                answer: null, // No answer provided on timeout#}
+{#                solution: {{ solution|json_encode|raw }} // Ensure solution is properly escaped#}
+{#            })#}
+{#        })#}
+{#            .then(response => {#}
+{#                if (!response.ok) throw new Error('Network error');#}
+{#                return response.json();#}
+{#            })#}
+{#            .then(updateGameState)#}
+{#            .catch(error => {#}
+{#                console.error('Error:', error);#}
+{#                alert('An error occurred. Please try again.');#}
+{#            });#}
+{#    }#}
 
-    // Handle form submission
-    document.addEventListener("load", () => {
-        const answerForm = document.getElementById('answerForm');
-        if (answerForm) {
-            answerForm.onsubmit = function (e) {
-                e.preventDefault();
-                clearInterval(countdownInterval);
+{#    // Handle form submission#}
+{#    document.addEventListener("DOMContentLoaded", () => {#}
+{#        const answerForm = document.getElementById('answerForm');#}
+{#        if (answerForm) {#}
+{#            answerForm.onsubmit = function (e) {#}
+{#                e.preventDefault();#}
+{#                clearInterval(countdownInterval);#}
 
-                const answerInput = document.getElementById('answerInput');
-                const answer = answerInput ? answerInput.value : null;
+{#                const answerInput = document.getElementById('answerInput');#}
+{#                const answer = answerInput ? answerInput.value : null;#}
 
-                fetch('{{ path('game_submit_answer') }}', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        answer: answer,
-                        solution: {{ solution|json_encode|raw }}
-                    })
-                })
-                    .then(response => {
-                        if (!response.ok) throw new Error('Network error');
-                        return response.json();
-                    })
-                    .then(updateGameState)
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert('An error occurred. Please try again.');
-                    });
-            };
-        } else {
-            console.error('Form with ID "answerForm" not found in DOM.');
-        }
+{#                fetch('{{ path('game_submit_answer') }}', {#}
+{#                    method: 'POST',#}
+{#                    headers: { 'Content-Type': 'application/json' },#}
+{#                    body: JSON.stringify({#}
+{#                        answer: answer,#}
+{#                        solution: {{ solution|json_encode|raw }}#}
+{#                    })#}
+{#                })#}
+{#                    .then(response => {#}
+{#                        if (!response.ok) throw new Error('Network error');#}
+{#                        return response.json();#}
+{#                    })#}
+{#                    .then(updateGameState)#}
+{#                    .catch(error => {#}
+{#                        console.error('Error:', error);#}
+{#                        alert('An error occurred. Please try again.');#}
+{#                    });#}
+{#            };#}
+{#        } else {#}
+{#            console.error('Form with ID "answerForm" not found in DOM.');#}
+{#        }#}
 
-        // Start the game timer
-        console.log("DOM fully loaded. Starting the timer...");
-        startTimer();
-    });
+{#        // Start the game timer#}
+{#        console.log("DOM fully loaded. Starting the timer...");#}
+{#        startTimer();#}
+{#    });#}
 
-    // Update the game state dynamically
-    function updateGameState(data) {
-        console.log('asdfasdfasdf')
-        if (data.gameOver) {
-            alert("Game Over! Your Score is: " + (data.score));
-            window.location.href = "{{ path('app_dashboard') }}"; // Redirect to game home
-        } else {
-            location.reload();
-            // Update lives, score, and reset the timer
-            const livesElement = document.getElementById('lives');
-            const scoreElement = document.getElementById('score');
+{#    // Update the game state dynamically#}
+{#    function updateGameState(data) {#}
+{#        console.log('asdfasdfasdf')#}
+{#        if (data.gameOver) {#}
+{#            alert("Game Over! Your Score is: " + (data.score));#}
+{#            window.location.href = "{{ path('app_dashboard') }}"; // Redirect to game home#}
+{#        } else {#}
+{#            location.reload();#}
+{#            // Update lives, score, and reset the timer#}
+{#            const livesElement = document.getElementById('lives');#}
+{#            const scoreElement = document.getElementById('score');#}
 
-            if (livesElement) livesElement.textContent = data.lives;
-            if (scoreElement) scoreElement.textContent = data.score;
+{#            if (livesElement) livesElement.textContent = data.lives;#}
+{#            if (scoreElement) scoreElement.textContent = data.score;#}
 
-            timeRemaining = {{ timeLimit }};
-            startTimer(); // Restart timer for next question
-        }
-    }
-</script>
+{#            timeRemaining = {{ timeLimit }};#}
+{#            startTimer(); // Restart timer for next question#}
+{#        }#}
+{#    }#}
+{#</script>#}
