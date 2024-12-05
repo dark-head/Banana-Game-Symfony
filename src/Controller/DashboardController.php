@@ -69,4 +69,37 @@ class DashboardController extends AbstractController
 
         return $userHistory;
     }
+
+    #[Route('/user/{id}/game-sessions', name: 'user_game_sessions')]
+    public function userGameSessions($id): Response
+    {
+        $gameSessions = $this->entityManager->getRepository(GameSession::class)->findByUser($id);
+        return $this->render('dashboard/history.html.twig', [
+            'gameSessions' => $gameSessions,
+        ]);
+    }
+
+    #[Route('/leaderboards', name: 'leaderboard')]
+
+    public function leaderboard(): Response
+    {
+        $easyLevel = Constant::EASY_LEVEL; // Define your level IDs
+        $mediumLevel = Constant::MEDIUM_LEVEL;
+        $hardLevel = Constant::HARD_LEVEL;
+
+        $easyLeaderboard = $this->entityManager->getRepository(GameSession::class)->findTopUsersByLevel($easyLevel);
+        $mediumLeaderboard = $this->entityManager->getRepository(GameSession::class)->findTopUsersByLevel($mediumLevel);
+        $hardLeaderboard = $this->entityManager->getRepository(GameSession::class)->findTopUsersByLevel($hardLevel);
+
+        // Organize scores by level
+        $scoresByLevel = [
+            'easy' => $easyLeaderboard,
+            'medium' => $mediumLeaderboard,
+            'hard' => $hardLeaderboard,
+        ];
+
+        return $this->render('dashboard/leaderboard.html.twig', [
+            'scoresByLevel' => $scoresByLevel,
+        ]);
+    }
 }

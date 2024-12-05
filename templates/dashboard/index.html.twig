@@ -95,12 +95,12 @@
             </div>
             <div class="d-flex justify-content-center mt-3">
                 <div class="col-md-6 row ">
-                    <a href="#" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">Lead Board</a>
+                    <a href="{{ path('leaderboard') }}" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">Lead Board</a>
                 </div>
             </div>
             <div class="d-flex justify-content-center mt-3">
                 <div class="col-md-6 row ">
-                    <a href="#" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">History</a>
+                    <a href="{{ path('user_game_sessions', {id: app.user.id}) }}" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">History</a>
                 </div>
             </div>
             <div class="d-flex justify-content-center mt-3">

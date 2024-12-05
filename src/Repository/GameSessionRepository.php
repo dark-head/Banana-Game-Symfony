@@ -31,4 +31,32 @@ class GameSessionRepository extends EntityRepository
 
         return $qb;
     }
+
+    public function findByUser($userId)
+    {
+        return $this->createQueryBuilder('gs')
+            ->innerJoin('gs.gameSetting', 'g')
+            ->addSelect('g')
+            ->where('gs.user = :userId')
+            ->setParameter('userId', $userId)
+            ->orderBy('g.level', 'DESC')
+            ->orderBy('gs.id', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findTopUsersByLevel(int $level, int $limit = 20): array
+    {
+        return $this->createQueryBuilder('gs')
+            ->select('u.username, MAX(gs.score) AS highestScore, MIN(gs.date) AS firstAchieved')
+            ->join('gs.user', 'u')
+            ->join('gs.gameSetting', 'g')
+            ->where('g.level = :level')
+            ->setParameter('level', $level)
+            ->groupBy('u.id')
+            ->orderBy('highestScore', 'DESC') // Sort by highest score
+            ->setMaxResults($limit)          // Limit to the top 20 users
+            ->getQuery()
+            ->getResult();
+    }
 }

@@ -1,87 +1,94 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Banana Game{% endblock %}
+{% block title %}History{% endblock %}
 
 {% block body %}
     <style>
-        .example-wrapper {
-            margin: 1em auto;
-            max-width: 800px;
-            width: 95%;
-            font: 18px/1.5 sans-serif;
+        h3, table th, table td{
+            color: #cccccc;
         }
-
-        .example-wrapper code {
-            background: #F5F5F5;
-            padding: 2px 6px;
-        }
-
-        /* public/css/game.css */
-        .levels {
-            display: flex;
-            justify-content: space-around;
-            margin-top: 20px;
-        }
-
-        .levels div {
-            border: 1px solid #ccc;
-            padding: 20px;
-            width: 200px;
-            text-align: center;
-        }
-
-        .levels h2 {
-            margin-bottom: 10px;
-        }
-
-        .btn {
-            padding: 10px;
-            text-decoration: none;
-            color: white;
-            border-radius: 5px;
-        }
-
-        .btn-success {
-            background-color: #28a745;
-        }
-
-        .btn-warning {
-            background-color: #ffc107;
-        }
-
-        .btn-danger {
-            background-color: #dc3545;
-        }
-
     </style>
+    <div class="container">
+        <h1>User Game Sessions</h1>
 
-    <div class="example-wrapper">
-        <h1>Hello {{ app.user.firstName }}! ✅</h1>
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <a class="nav-link active" id="easy-tab" data-bs-toggle="tab" href="#easy" role="tab" aria-controls="easy" aria-selected="true">Easy</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" id="medium-tab" data-bs-toggle="tab" href="#medium" role="tab" aria-controls="medium" aria-selected="false">Medium</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" id="hard-tab" data-bs-toggle="tab" href="#hard" role="tab" aria-controls="hard" aria-selected="false">Hard</a>
+            </li>
+        </ul>
 
-        <h1>Select Your Level</h1>
-    </div>
+        <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade show active" id="easy" role="tabpanel" aria-labelledby="easy-tab">
+                <h3>Easy Level</h3>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Score</th>
+                        <th>Date</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for session in gameSessions %}
+                        {% if session.gameSetting.level == 101 %}
+                            <tr>
+                                <td>{{ session.score }}</td>
+                                <td>{{ session.date|date('Y-m-d H:i') }}</td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
 
+            <div class="tab-pane fade" id="medium" role="tabpanel" aria-labelledby="medium-tab">
+                <h3>Medium Level</h3>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Score</th>
+                        <th>Date</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for session in gameSessions %}
+                        {% if session.gameSetting.level == 102 %}
+                            <tr>
+                                <td>{{ session.score }}</td>
+                                <td>{{ session.date|date('Y-m-d H:i') }}</td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
 
-    <div class="levels">
-        <div>
-            <h2>Easy</h2>
-            <p>Time Limit: 1 minute</p>
-            <p>Highest Score: {{ highestScores.easy }}</p>
-            <a href="{{ path('game_level', { difficulty: 'easy' }) }}" class="btn btn-success">Play Easy</a>
-        </div>
-
-        <div>
-            <h2>Medium</h2>
-            <p>Time Limit: 30 seconds</p>
-            <p>Highest Score: {{ highestScores.medium }}</p>
-            <a href="{{ path('game_level', { difficulty: 'medium' }) }}" class="btn btn-warning">Play Medium</a>
-        </div>
-
-        <div>
-            <h2>Hard</h2>
-            <p>Time Limit: 15 seconds</p>
-            <p>Highest Score: {{ highestScores.hard }}</p>
-            <a href="{{ path('game_level', { difficulty: 'hard' }) }}" class="btn btn-danger">Play Hard</a>
+            <div class="tab-pane fade" id="hard" role="tabpanel" aria-labelledby="hard-tab">
+                <h3>Hard Level</h3>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Score</th>
+                        <th>Date</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for session in gameSessions %}
+                        {% if session.gameSetting.level == 103 %}
+                            <tr>
+                                <td>{{ session.score }}</td>
+                                <td>{{ session.date|date('Y-m-d H:i') }}</td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 {% endblock %}
