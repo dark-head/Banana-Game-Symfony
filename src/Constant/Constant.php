@@ -17,4 +17,5 @@ class Constant
         self::HARD_LEVEL => 'HARD',
     ];
 
+    public const API_URL = 'http://marcconrad.com/uob/banana/api.php';
 }
