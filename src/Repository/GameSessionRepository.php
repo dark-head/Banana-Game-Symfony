@@ -23,11 +23,9 @@ class GameSessionRepository extends EntityRepository
             $qb->andWhere('gs.user = :user')->setParameter('user', $params['user']);
 
 
-//        if (QueryHelper::FilterCheck($params, 'highestScore', true))
-//            $qb->andWhere('gs.score = MAX(gs.score)');
-//        dd($params);
-
-        $qb->orderBy('gs.id', 'DESC');
+        if (QueryHelper::FilterCheck($params, 'highestScore', true)){
+            $qb->orderBy('gs.score', 'DESC');
+        }
 
         return $qb;
     }
@@ -53,6 +51,7 @@ class GameSessionRepository extends EntityRepository
             ->join('gs.gameSetting', 'g')
             ->where('g.level = :level')
             ->setParameter('level', $level)
+            ->andWhere('gs.score > 0')
             ->groupBy('u.id')
             ->orderBy('highestScore', 'DESC') // Sort by highest score
             ->setMaxResults($limit)          // Limit to the top 20 users

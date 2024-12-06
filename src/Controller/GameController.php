@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
+#[Route('/game')]
 class GameController extends AbstractController
 {
     private const API_URL = 'http://marcconrad.com/uob/banana/api.php';
@@ -22,7 +23,7 @@ class GameController extends AbstractController
         $this->entityManager = $entityManager;
     }
 
-    #[Route('/game/level/{gameSetting}', name: 'game_level')]
+    #[Route('/level/{gameSetting}', name: 'game_level')]
     public function playLevel(Request $request, GameSetting $gameSetting): Response
     {
         $session = $request->getSession();
@@ -44,7 +45,7 @@ class GameController extends AbstractController
         ]);
     }
 
-    #[Route('/game/submit-answer', name: 'game_submit_answer', methods: ['POST'])]
+    #[Route('/submit-answer', name: 'game_submit_answer', methods: ['POST'])]
     public function submitAnswer(Request $request): JsonResponse
     {
         $data = json_decode($request->getContent(), true);

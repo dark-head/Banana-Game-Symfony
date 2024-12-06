@@ -11,10 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: GameSettingRepository::class)]
 class GameSetting
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
+    use EntityIDTrait;
 
     #[ORM\Column]
     private ?int $totalSecond = 30;

@@ -88,11 +88,13 @@
         </div>
 
         <div class="mt-5">
-            <div class="d-flex justify-content-center mt-3">
-                <div class="col-md-6 row ">
-                    <a href="{{ path('app_game_setting') }}" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">Game Setting</a>
+            {% if is_granted('ROLE_ADMIN') %}
+                <div class="d-flex justify-content-center mt-3">
+                    <div class="col-md-6 row ">
+                        <a href="{{ path('app_game_setting') }}" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">Game Setting</a>
+                    </div>
                 </div>
-            </div>
+            {% endif %}
             <div class="d-flex justify-content-center mt-3">
                 <div class="col-md-6 row ">
                     <a href="{{ path('leaderboard') }}" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">Lead Board</a>

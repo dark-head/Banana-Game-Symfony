@@ -83,7 +83,7 @@ class DashboardController extends AbstractController
 
     public function leaderboard(): Response
     {
-        $easyLevel = Constant::EASY_LEVEL; // Define your level IDs
+        $easyLevel = Constant::EASY_LEVEL;
         $mediumLevel = Constant::MEDIUM_LEVEL;
         $hardLevel = Constant::HARD_LEVEL;
 

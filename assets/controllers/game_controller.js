@@ -19,6 +19,14 @@ export default class extends Controller {
         this.startTimer();
     }
 
+    disconnect() {
+        // Stop the timer when the controller is disconnected
+        if (this.countdownInterval) {
+            clearInterval(this.countdownInterval);
+            this.countdownInterval = null;
+        }
+    }
+
     startTimer() {
         console.log(this.currentSolution);
         this.countdownInterval = setInterval(() => {

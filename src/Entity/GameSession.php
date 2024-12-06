@@ -10,10 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: GameSessionRepository::class)]
 class GameSession
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
+    use EntityIDTrait;
 
     #[ORM\Column]
     private ?int $score = null;

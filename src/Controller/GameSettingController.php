@@ -10,6 +10,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
+#[Route('/game-setting')]
+
 class GameSettingController extends AbstractController
 {
     protected EntityManagerInterface $entityManager;
@@ -19,15 +21,15 @@ class GameSettingController extends AbstractController
         $this->entityManager = $entityManager;
     }
 
-    #[Route('/game-setting', name: 'app_game_setting')]
+    #[Route('/', name: 'app_game_setting')]
     public function list(Request $request): Response
     {
         $gameSetting = $this->entityManager->getRepository(GameSetting::class)->findAll();
         return $this->render('game_setting/list.html.twig', ['gameSetting' => $gameSetting]);
     }
 
-    #[Route('/game-setting/create', name: 'game_setting_new')]
-    #[Route('/game-setting/edit/{id}', name: 'game_setting_edit')]
+    #[Route('/create', name: 'game_setting_new')]
+    #[Route('/edit/{id}', name: 'game_setting_edit')]
     public function new(Request $request): Response
     {
         if ($request->get('id')) {
